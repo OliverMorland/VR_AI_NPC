@@ -4,6 +4,8 @@ using UnityEngine;
 using OpenAI;
 using UnityEngine.Events;
 using System;
+using Oculus.Voice;
+using Oculus.Voice.Dictation;
 
 public class ChatGPTManager : MonoBehaviour
 {
@@ -17,6 +19,7 @@ public class ChatGPTManager : MonoBehaviour
     private List<ChatMessage> messages = new List<ChatMessage>();
     public UnityEvent<string> onResponseEvent = new UnityEvent<string>();
     public List<NPCAction> npcActions = new List<NPCAction>();
+    public AppDictationExperience voiceToText;
 
     [Serializable]
     public struct NPCAction
@@ -87,7 +90,7 @@ public class ChatGPTManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        voiceToText.DictationEvents.OnFullTranscription.AddListener(AskChatGPT);;
     }
 
     // Update is called once per frame

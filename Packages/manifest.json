@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.meta.xr.sdk.voice": "65.0.0",
     "com.srcnalt.openai-unity": "https://github.com/srcnalt/OpenAI-Unity.git",
     "com.unity.cloud.gltfast": "6.0.1",
     "com.unity.collab-proxy": "2.3.1",
