@@ -16,6 +16,16 @@ public class ChatGPTManager : MonoBehaviour
     private OpenAIApi openAI = new OpenAIApi();
     private List<ChatMessage> messages = new List<ChatMessage>();
     public UnityEvent<string> onResponseEvent = new UnityEvent<string>();
+    public List<NPCAction> npcActions = new List<NPCAction>();
+
+    [Serializable]
+    public struct NPCAction
+    {
+        public string actionKeyword;
+        [TextArea(3, 5)]
+        public string actionDescription;
+        public UnityEvent actionEvent;
+    }
 
     public string GetInstructions()
     {
@@ -26,7 +36,19 @@ public class ChatGPTManager : MonoBehaviour
             personality + "\n" +
             "Here is the information about the scene around you: \n" +
             scene + "\n" +
+            BuildActionInstructions() +
             "Here is the message of the player: \n";
+        return instructions;
+    }
+
+    public string BuildActionInstructions()
+    {
+        string instructions = "";
+        foreach (NPCAction action in npcActions)
+        {
+            instructions += "if I imply that I want you to do the following: " + action.actionDescription
+                + ". You must add to your answer the following key word: " + action.actionKeyword + ". \n";
+        }
         return instructions;
     }
 
@@ -46,6 +68,17 @@ public class ChatGPTManager : MonoBehaviour
         if (response.Choices != null && response.Choices.Count > 0)
         {
             var chatResponse = response.Choices[0].Message;
+
+            foreach (NPCAction action in npcActions)
+            {
+                if (chatResponse.Content.Contains(action.actionKeyword))
+                {
+                    //string textNoKeyword = chatResponse.Content.Replace(action.actionKeyword, "");
+                    //chatResponse.Content = textNoKeyword;
+                    action.actionEvent.Invoke();
+                }
+            }
+
             messages.Add(chatResponse);
             onResponseEvent.Invoke(chatResponse.Content);
         }

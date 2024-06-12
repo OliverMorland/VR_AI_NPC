@@ -1503,6 +1503,41 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  npcActions:
+  - actionKeyword: WALK
+    actionDescription: Start walking
+    actionEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 6635245195409650427}
+          m_TargetAssemblyTypeName: WalkingController, Assembly-CSharp
+          m_MethodName: SetWalkingSpeed
+          m_Mode: 4
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0.7
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - actionKeyword: STOP WALK
+    actionDescription: Stop walking
+    actionEvent:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 6635245195409650427}
+          m_TargetAssemblyTypeName: WalkingController, Assembly-CSharp
+          m_MethodName: SetWalkingSpeed
+          m_Mode: 4
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!4 &1510815766
 Transform:
   m_ObjectHideFlags: 0
@@ -2046,8 +2081,34 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4605458639123257569, guid: bb3bd56a3e34b8c4da233c1f8f8dfd4e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1878520124}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4626545902974087235, guid: bb3bd56a3e34b8c4da233c1f8f8dfd4e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6635245195409650427}
   m_SourcePrefab: {fileID: 100100000, guid: bb3bd56a3e34b8c4da233c1f8f8dfd4e, type: 3}
+--- !u!1 &6635245195409650425 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4626545902974087235, guid: bb3bd56a3e34b8c4da233c1f8f8dfd4e, type: 3}
+  m_PrefabInstance: {fileID: 4507924816268828664}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &6635245195409650426 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2501566666605344924, guid: bb3bd56a3e34b8c4da233c1f8f8dfd4e, type: 3}
+  m_PrefabInstance: {fileID: 4507924816268828664}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6635245195409650427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6635245195409650425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c4b3fffcf5abe7488c569838a990ec6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 6635245195409650426}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
