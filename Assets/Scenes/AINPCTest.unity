@@ -1481,6 +1481,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f575b36f178988b478f50eeb544a8e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  personality: You are very friendly and charming. You are able to gently persuade
+    people to do what you ask of them by tapping into their deepest desires.
+  scene: 'You are in the hallway of the hotel in Baltimore where the conference is
+    occurring. Behind you is a booth where your VR experience is ready to demonstrate
+    to people. '
+  avatarName: Oliver
+  maxResponseLimit: 15
+  onResponseEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1342735533}
+        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
+        m_MethodName: set_text
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!4 &1510815766
 Transform:
   m_ObjectHideFlags: 0
