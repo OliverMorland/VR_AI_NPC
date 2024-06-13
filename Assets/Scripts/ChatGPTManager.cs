@@ -14,7 +14,7 @@ public class ChatGPTManager : MonoBehaviour
     [TextArea(5, 20)]
     public string scene;
     public string avatarName = "Oliver";
-    public int maxResponseLimit = 20;
+    public int maxResponseLimit = 25;
     private OpenAIApi openAI = new OpenAIApi();
     private List<ChatMessage> messages = new List<ChatMessage>();
     public UnityEvent<string> onResponseEvent = new UnityEvent<string>();
@@ -32,8 +32,8 @@ public class ChatGPTManager : MonoBehaviour
 
     public string GetInstructions()
     {
-        string instructions = "You are a Unity developer called " + avatarName + " who is dressed in a blue suit participating at a healthcare conference in Baltimore. + \n" +
-            "You are trying to persuade me to go to a booth to try a VR experience that you have built which will teach me to survey health care facilities.\n" +
+        string instructions = "You are a Unity developer called " + avatarName + " who works for Swingtech consulting. + \n" +
+            "You specialize in VR development\n" +
             "You must answer in less than " + maxResponseLimit + " words.\n" +
             "Here is the information about your personality: \n" +
             personality + "\n" +
