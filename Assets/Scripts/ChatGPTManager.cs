@@ -15,7 +15,7 @@ public class ChatGPTManager : MonoBehaviour
     public string scene;
     public string avatarName = "Oliver";
     public int maxResponseLimit = 25;
-    private OpenAIApi openAI = new OpenAIApi();
+    private OpenAIApi openAI = new OpenAIApi("sk-proj-YB0EY7raZTsuyt8WvNArT3BlbkFJssGY3bGGSTJgfjRRWjjV");
     private List<ChatMessage> messages = new List<ChatMessage>();
     public UnityEvent<string> onResponseEvent = new UnityEvent<string>();
     public List<NPCAction> npcActions = new List<NPCAction>();
@@ -57,6 +57,7 @@ public class ChatGPTManager : MonoBehaviour
 
     public async void AskChatGPT(string newText)
     {
+        Debug.Log("OLILOG Start of AskChatGPT");
         ChatMessage newMessage = new ChatMessage();
         newMessage.Content = GetInstructions() + newText;
         newMessage.Role = "user";
@@ -66,10 +67,13 @@ public class ChatGPTManager : MonoBehaviour
         request.Messages = messages;
         request.Model = "gpt-3.5-turbo";
 
+        Debug.Log("OLILOG About to create chat completion");
         var response = await openAI.CreateChatCompletion(request);
-        
+        Debug.Log("OLILOG Created Chat Completion");
+
         if (response.Choices != null && response.Choices.Count > 0)
         {
+            Debug.Log("OLILOG response.Choices is not null");
             var chatResponse = response.Choices[0].Message;
 
             foreach (NPCAction action in npcActions)
@@ -85,6 +89,11 @@ public class ChatGPTManager : MonoBehaviour
             messages.Add(chatResponse);
             onResponseEvent.Invoke(chatResponse.Content);
         }
+        else
+        {
+            Debug.Log("OLILOG no responses");
+        }
+        Debug.Log("OLILOG End of AskChatGPT");
     }
 
     // Start is called before the first frame update
