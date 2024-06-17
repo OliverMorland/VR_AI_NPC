@@ -6,6 +6,7 @@ using UnityEngine.Events;
 using System;
 using Oculus.Voice;
 using Oculus.Voice.Dictation;
+using TMPro;
 
 public class ChatGPTManager : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class ChatGPTManager : MonoBehaviour
     public UnityEvent<string> onResponseEvent = new UnityEvent<string>();
     public List<NPCAction> npcActions = new List<NPCAction>();
     public AppDictationExperience voiceToText;
+    public TMP_InputField inputField;
 
     [Serializable]
     public struct NPCAction
@@ -57,7 +59,6 @@ public class ChatGPTManager : MonoBehaviour
 
     public async void AskChatGPT(string newText)
     {
-        Debug.Log("OLILOG Start of AskChatGPT");
         ChatMessage newMessage = new ChatMessage();
         newMessage.Content = GetInstructions() + newText;
         newMessage.Role = "user";
@@ -67,13 +68,10 @@ public class ChatGPTManager : MonoBehaviour
         request.Messages = messages;
         request.Model = "gpt-3.5-turbo";
 
-        Debug.Log("OLILOG About to create chat completion");
         var response = await openAI.CreateChatCompletion(request);
-        Debug.Log("OLILOG Created Chat Completion");
 
         if (response.Choices != null && response.Choices.Count > 0)
         {
-            Debug.Log("OLILOG response.Choices is not null");
             var chatResponse = response.Choices[0].Message;
 
             foreach (NPCAction action in npcActions)
@@ -89,17 +87,18 @@ public class ChatGPTManager : MonoBehaviour
             messages.Add(chatResponse);
             onResponseEvent.Invoke(chatResponse.Content);
         }
-        else
-        {
-            Debug.Log("OLILOG no responses");
-        }
-        Debug.Log("OLILOG End of AskChatGPT");
     }
 
     // Start is called before the first frame update
     void Start()
     {
         voiceToText.DictationEvents.OnFullTranscription.AddListener(AskChatGPT);;
+    }
+
+    void OnFullTranscription(string transcription)
+    {
+        inputField.text = transcription;
+        AskChatGPT(transcription);
     }
 
     // Update is called once per frame
