@@ -8,10 +8,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 55daccc09a3b69647bbab145b54a3ab3
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/AINPCTest.unity
     guid: 7e01f2e268ede5046bb5f66186808e20
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SimpleAIChatScene.unity
     guid: dbe1a2c1aeefbfe429a6deb2647d2e38
   m_configObjects:
