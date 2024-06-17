@@ -4,9 +4,9 @@ using UnityEngine;
 using OpenAI;
 using UnityEngine.Events;
 using System;
-using Oculus.Voice;
 using Oculus.Voice.Dictation;
 using TMPro;
+using Meta.WitAi.TTS.Utilities;
 
 public class ChatGPTManager : MonoBehaviour
 {
@@ -21,8 +21,23 @@ public class ChatGPTManager : MonoBehaviour
     public UnityEvent<string> onResponseEvent = new UnityEvent<string>();
     public List<NPCAction> npcActions = new List<NPCAction>();
     public AppDictationExperience voiceToText;
-    public TMP_InputField inputField;
+    public TMP_Text voiceInputLabel;
     public OpenAIConfigurationSO openAIConfiguration;
+    public TTSSpeaker textToSpeechSpeaker;
+    string currentOpenAIResponse;
+
+    [Header("Physical Interaction Settings")]
+    public float minConversationRange = 5f;
+    public float lookAtAngleThreshold = 0.7f;
+    public Transform headTransform;
+    Transform userView;
+    public TMP_Text npcFeedbackText;
+    public enum NPCState { None, IsListening, IsThinking, IsTalking};
+    public NPCState currentNPCState = NPCState.None;
+    public Animator animator;
+    const string THINK_TRIGGER = "Think";
+    const string TALK_TRIGGER = "Talk";
+    const string STOP_TALK_TRIGGER = "StopTalking";
 
     [Serializable]
     public struct NPCAction
@@ -31,6 +46,32 @@ public class ChatGPTManager : MonoBehaviour
         [TextArea(3, 5)]
         public string actionDescription;
         public UnityEvent actionEvent;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        if (openAIConfiguration == null && string.IsNullOrEmpty(openAIConfiguration.secretAPIKey))
+        {
+            Debug.LogError("No Secret Api key for Open AI, please create a configuration");
+        }
+        else
+        {
+            openAI = new OpenAIApi(openAIConfiguration.secretAPIKey);
+        }
+        voiceToText.DictationEvents.OnFullTranscription.AddListener(OnFullTranscription);;
+        textToSpeechSpeaker.Events.OnAudioClipPlaybackStart.AddListener(OnTextToSpeechStarted);
+        textToSpeechSpeaker.Events.OnAudioClipPlaybackFinished.AddListener(OnTextToSpeechFinished);
+        onResponseEvent.AddListener(OnResponse);
+        userView = Camera.main.transform;
+        voiceInputLabel.text = "";
+    }
+
+    void OnFullTranscription(string transcription)
+    {
+        voiceInputLabel.text = transcription;
+        AskChatGPT(transcription);
+        SetNPCState(NPCState.IsThinking);
     }
 
     public string GetInstructions()
@@ -90,29 +131,67 @@ public class ChatGPTManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        if (openAIConfiguration == null && string.IsNullOrEmpty(openAIConfiguration.secretAPIKey))
-        {
-            Debug.LogError("No Secret Api key for Open AI, please create a configuration");
-        }
-        else
-        {
-            openAI = new OpenAIApi(openAIConfiguration.secretAPIKey);
-        }
-        voiceToText.DictationEvents.OnFullTranscription.AddListener(OnFullTranscription);;
-    }
-
-    void OnFullTranscription(string transcription)
-    {
-        inputField.text = transcription;
-        AskChatGPT(transcription);
-    }
-
     // Update is called once per frame
     void Update()
     {
-        
+        Vector3 userToHeadVector = headTransform.position - userView.transform.position;
+        float distanceSquared = userToHeadVector.sqrMagnitude;
+        float viewDirectionsDot = Vector3.Dot(userView.forward, headTransform.forward * -1f);
+        if ((distanceSquared < minConversationRange) && (viewDirectionsDot > lookAtAngleThreshold))
+        {
+            if (currentNPCState == NPCState.None)
+            {
+                SetNPCState(NPCState.IsListening);
+            }
+        }
+        else
+        {
+            if (currentNPCState == NPCState.IsListening)
+            {
+                SetNPCState(NPCState.None);
+            }
+        }
+    }
+
+    void SetNPCState(NPCState desiredNPCState)
+    {
+        currentNPCState = desiredNPCState;
+
+        switch (currentNPCState)
+        {
+            case NPCState.None:
+                //Do nothing
+                npcFeedbackText.text = "";
+                animator.SetTrigger(STOP_TALK_TRIGGER);
+                break;
+            case NPCState.IsListening:
+                npcFeedbackText.text = "Listening...";
+                voiceToText.Activate();
+                break;
+            case NPCState.IsThinking:
+                npcFeedbackText.text = "Thinking...";
+                animator.SetTrigger(THINK_TRIGGER);
+                voiceToText.Deactivate();
+                break;
+            case NPCState.IsTalking:
+                animator.SetTrigger(TALK_TRIGGER);
+                npcFeedbackText.text = currentOpenAIResponse;
+                break;
+        }
+    }
+
+    void OnResponse(string message)
+    {
+        currentOpenAIResponse = message;
+    }
+
+    void OnTextToSpeechStarted(AudioClip clip)
+    {
+        SetNPCState(NPCState.IsTalking);
+    }
+
+    private void OnTextToSpeechFinished(AudioClip clip)
+    {
+        SetNPCState(NPCState.None);
     }
 }
