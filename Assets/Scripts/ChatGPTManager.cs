@@ -16,12 +16,13 @@ public class ChatGPTManager : MonoBehaviour
     public string scene;
     public string avatarName = "Oliver";
     public int maxResponseLimit = 25;
-    private OpenAIApi openAI = new OpenAIApi("sk-proj-YB0EY7raZTsuyt8WvNArT3BlbkFJssGY3bGGSTJgfjRRWjjV");
+    private OpenAIApi openAI = new OpenAIApi();
     private List<ChatMessage> messages = new List<ChatMessage>();
     public UnityEvent<string> onResponseEvent = new UnityEvent<string>();
     public List<NPCAction> npcActions = new List<NPCAction>();
     public AppDictationExperience voiceToText;
     public TMP_InputField inputField;
+    public OpenAIConfigurationSO openAIConfiguration;
 
     [Serializable]
     public struct NPCAction
@@ -92,7 +93,8 @@ public class ChatGPTManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        voiceToText.DictationEvents.OnFullTranscription.AddListener(AskChatGPT);;
+        openAI = new OpenAIApi(openAIConfiguration.secretAPIKey);
+        voiceToText.DictationEvents.OnFullTranscription.AddListener(OnFullTranscription);;
     }
 
     void OnFullTranscription(string transcription)

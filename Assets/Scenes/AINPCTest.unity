@@ -2117,6 +2117,7 @@ MonoBehaviour:
           m_CallState: 2
   voiceToText: {fileID: 1773329635}
   inputField: {fileID: 1665333748}
+  openAIConfiguration: {fileID: 11400000, guid: 8123d0f54bf3a404f99564b995956033, type: 2}
 --- !u!4 &1510815766
 Transform:
   m_ObjectHideFlags: 0
