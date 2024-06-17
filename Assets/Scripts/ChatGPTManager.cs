@@ -7,7 +7,6 @@ using System;
 using Oculus.Voice;
 using Oculus.Voice.Dictation;
 using TMPro;
-using Unity.Tutorials.Core.Editor;
 
 public class ChatGPTManager : MonoBehaviour
 {
@@ -94,7 +93,7 @@ public class ChatGPTManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (openAIConfiguration == null && openAIConfiguration.secretAPIKey.IsNullOrEmpty())
+        if (openAIConfiguration == null && string.IsNullOrEmpty(openAIConfiguration.secretAPIKey))
         {
             Debug.LogError("No Secret Api key for Open AI, please create a configuration");
         }
