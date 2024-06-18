@@ -28,16 +28,16 @@ public class ChatGPTManager : MonoBehaviour
 
     [Header("Physical Interaction Settings")]
     public float minConversationRange = 5f;
-    public float lookAtAngleThreshold = 0.7f;
-    public Transform headTransform;
     Transform userView;
+    public Transform avatarTransform;
     public TMP_Text npcFeedbackText;
     public enum NPCState { None, IsListening, IsThinking, IsTalking};
     public NPCState currentNPCState = NPCState.None;
     public Animator animator;
+    const string LISTEN_TRIGGER = "Listen";
     const string THINK_TRIGGER = "Think";
     const string TALK_TRIGGER = "Talk";
-    const string STOP_TALK_TRIGGER = "StopTalking";
+    const string IDLE_TRIGGER = "Idle";
 
     [Serializable]
     public struct NPCAction
@@ -134,10 +134,9 @@ public class ChatGPTManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 userToHeadVector = headTransform.position - userView.transform.position;
+        Vector3 userToHeadVector = avatarTransform.position - userView.transform.position;
         float distanceSquared = userToHeadVector.sqrMagnitude;
-        float viewDirectionsDot = Vector3.Dot(userView.forward, headTransform.forward * -1f);
-        if ((distanceSquared < minConversationRange) && (viewDirectionsDot > lookAtAngleThreshold))
+        if (distanceSquared < minConversationRange)
         {
             if (currentNPCState == NPCState.None)
             {
@@ -156,16 +155,18 @@ public class ChatGPTManager : MonoBehaviour
     void SetNPCState(NPCState desiredNPCState)
     {
         currentNPCState = desiredNPCState;
+        Debug.Log("Changing State to: " + desiredNPCState.ToString());
 
         switch (currentNPCState)
         {
             case NPCState.None:
                 //Do nothing
                 npcFeedbackText.text = "";
-                animator.SetTrigger(STOP_TALK_TRIGGER);
+                animator.SetTrigger(IDLE_TRIGGER);
                 break;
             case NPCState.IsListening:
                 npcFeedbackText.text = "Listening...";
+                animator.SetTrigger(LISTEN_TRIGGER);
                 voiceToText.Activate();
                 break;
             case NPCState.IsThinking:
