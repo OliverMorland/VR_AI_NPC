@@ -59,7 +59,8 @@ public class ChatGPTManager : MonoBehaviour
         {
             openAI = new OpenAIApi(openAIConfiguration.secretAPIKey);
         }
-        voiceToText.DictationEvents.OnFullTranscription.AddListener(OnFullTranscription);;
+        voiceToText.DictationEvents.OnPartialTranscription.AddListener(OnPartialDescription);
+        voiceToText.DictationEvents.OnFullTranscription.AddListener(OnFullTranscription);
         textToSpeechSpeaker.Events.OnAudioClipPlaybackStart.AddListener(OnTextToSpeechStarted);
         textToSpeechSpeaker.Events.OnAudioClipPlaybackFinished.AddListener(OnTextToSpeechFinished);
         onResponseEvent.AddListener(OnResponse);
@@ -67,25 +68,17 @@ public class ChatGPTManager : MonoBehaviour
         voiceInputLabel.text = "";
     }
 
+    private void OnPartialDescription(string transcript)
+    {
+        Debug.Log(transcript);
+        voiceInputLabel.text = transcript;
+    }
+
     void OnFullTranscription(string transcription)
     {
         voiceInputLabel.text = transcription;
         AskChatGPT(transcription);
         SetNPCState(NPCState.IsThinking);
-    }
-
-    public string GetInstructions()
-    {
-        string instructions = "You are a Unity developer called " + avatarName + " who works for Swingtech consulting. + \n" +
-            "You specialize in VR development\n" +
-            "You must answer in less than " + maxResponseLimit + " words.\n" +
-            "Here is the information about your personality: \n" +
-            personality + "\n" +
-            "Here is the information about the scene around you: \n" +
-            scene + "\n" +
-            BuildActionInstructions() +
-            "Here is the message of the player: \n";
-        return instructions;
     }
 
     public string BuildActionInstructions()
@@ -101,9 +94,13 @@ public class ChatGPTManager : MonoBehaviour
 
     public async void AskChatGPT(string newText)
     {
+        ChatMessage systemMessage = new ChatMessage();
+        systemMessage.Role = "system";
+        systemMessage.Content = "Your name is Oliver and you are surveying this bedroom in a long term care facility for safety risks. There is a smelly plate with old food lying around the bed, a syringe has been left in the trash can and a candle has been placed too close to an oxygen machine. You're in a bad mood and are reluctant to answer questions because you still haven't finished your job and and a football match is happening soon that you want to watch. England are playing Denmark in the European championships and it's an important game. All your answers must be less than 100 words long.";
         ChatMessage newMessage = new ChatMessage();
-        newMessage.Content = GetInstructions() + newText;
+        newMessage.Content = newText;
         newMessage.Role = "user";
+        messages.Add(systemMessage);
         messages.Add(newMessage);
 
         CreateChatCompletionRequest request = new CreateChatCompletionRequest();
@@ -120,8 +117,6 @@ public class ChatGPTManager : MonoBehaviour
             {
                 if (chatResponse.Content.Contains(action.actionKeyword))
                 {
-                    //string textNoKeyword = chatResponse.Content.Replace(action.actionKeyword, "");
-                    //chatResponse.Content = textNoKeyword;
                     action.actionEvent.Invoke();
                 }
             }
@@ -155,7 +150,6 @@ public class ChatGPTManager : MonoBehaviour
     void SetNPCState(NPCState desiredNPCState)
     {
         currentNPCState = desiredNPCState;
-        Debug.Log("Changing State to: " + desiredNPCState.ToString());
 
         switch (currentNPCState)
         {
@@ -163,6 +157,7 @@ public class ChatGPTManager : MonoBehaviour
                 //Do nothing
                 npcFeedbackText.text = "";
                 animator.SetTrigger(IDLE_TRIGGER);
+                voiceToText.Deactivate();
                 break;
             case NPCState.IsListening:
                 npcFeedbackText.text = "Listening...";
@@ -177,6 +172,7 @@ public class ChatGPTManager : MonoBehaviour
             case NPCState.IsTalking:
                 animator.SetTrigger(TALK_TRIGGER);
                 npcFeedbackText.text = currentOpenAIResponse;
+                voiceInputLabel.text = "";
                 break;
         }
     }

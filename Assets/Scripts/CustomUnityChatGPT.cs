@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 public class CustomUnityChatGPT : MonoBehaviour
 {
     // Replace with your OpenAI API key
-    private string apiKey = "sk-proj-YB0EY7raZTsuyt8WvNArT3BlbkFJssGY3bGGSTJgfjRRWjjV";
+    private string apiKey = "";
     // Replace with your OpenAI model, e.g., "gpt-3.5-turbo"
     private string model = "gpt-3.5-turbo";
     // Replace with your API endpoint, e.g., "https://api.openai.com/v1/chat/completions"
