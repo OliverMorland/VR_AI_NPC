@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
+using static AIAssistant;
 
 public class AIAssistant : MonoBehaviour
 {
@@ -39,7 +42,7 @@ public class AIAssistant : MonoBehaviour
     }
 
     [ContextMenu("Send Test Message")]
-    void SendMTestMessage()
+    void SendTestMessage()
     {
         StartCoroutine(AskAssistantAsync(testMessage));
     }
@@ -48,7 +51,6 @@ public class AIAssistant : MonoBehaviour
     {
         StartCoroutine(AskAssistantAsync(userMessage));
     }
-
 
     private IEnumerator AskAssistantAsync(string userMessage)
     {
@@ -110,6 +112,58 @@ public class AIAssistant : MonoBehaviour
             OnResponseRecieved.Invoke(content.text.value);
         }
     }
+
+    public struct WebRequestData
+    {
+        public string path;
+        public enum MethodType { POST, GET}
+        public MethodType methodType;
+        public byte[] body;
+    }
+
+    void DispatchWebRequest(WebRequestData webRequestData, Action<string> onRequestFailed, Action<string> onRequestSucceeded)
+    {
+        string methodAsString = GetMethodAsString(webRequestData.methodType);
+        UnityWebRequest webRequest = new UnityWebRequest(webRequestData.path, methodAsString);
+        webRequest.uploadHandler = new UploadHandlerRaw(webRequestData.body);
+        webRequest.downloadHandler = new DownloadHandlerBuffer();
+        webRequest.SetRequestHeader("Content-Type", "application/json");
+        webRequest.SetRequestHeader("OpenAI-Beta", "assistants=v2");
+        webRequest.SetRequestHeader("Authorization", "Bearer " + openAIConfig.secretAPIKey);
+        StartCoroutine(DispatchWebRequestAsync(webRequest, onRequestFailed, onRequestSucceeded));
+    }
+
+    IEnumerator DispatchWebRequestAsync(UnityWebRequest webRequest, Action<string> onRequestFailed, Action<string> onRequestSucceeded)
+    {
+        yield return webRequest.SendWebRequest();
+        if (RequestHasFailed(webRequest))
+        {
+            onRequestFailed.Invoke(webRequest.error);
+        }
+        else
+        {
+            onRequestSucceeded.Invoke(webRequest.downloadHandler.text);
+        }
+    }
+
+    string GetMethodAsString(WebRequestData.MethodType methodType)
+    {
+        string methodAsString = "";
+        switch (methodType)
+        {
+            case WebRequestData.MethodType.POST:
+                methodAsString = "POST";
+                break;
+            case WebRequestData.MethodType.GET:
+                methodAsString = "GET";
+                break;
+            default:
+                methodAsString = "GET";
+                break;
+        }
+        return methodAsString;
+    }
+
 
     bool MessagesHaveContents(Message[] messages)
     {
