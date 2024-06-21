@@ -713,6 +713,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   avatarName: Oliver
   maxResponseLimit: 25
+  aiAssistant: {fileID: 1633253577}
   onResponseEvent:
     m_PersistentCalls:
       m_Calls:
@@ -782,9 +783,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   openAIConfig: {fileID: 11400000, guid: 8123d0f54bf3a404f99564b995956033, type: 2}
+  assistantId: asst_7Fz3eMgBKW0SaqBw8hsigYkS
   OnResponseRecieved:
     m_PersistentCalls:
       m_Calls: []
+  testMessage: Hello
 --- !u!4 &1633253578
 Transform:
   m_ObjectHideFlags: 0

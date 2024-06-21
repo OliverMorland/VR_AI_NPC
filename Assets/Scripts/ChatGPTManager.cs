@@ -12,6 +12,7 @@ public class ChatGPTManager : MonoBehaviour
 {
     public string avatarName = "Oliver";
     public int maxResponseLimit = 25;
+    public AIAssistant aiAssistant;
     private OpenAIApi openAI = new OpenAIApi();
     private List<ChatMessage> messages = new List<ChatMessage>();
     public UnityEvent<string> onResponseEvent = new UnityEvent<string>();
@@ -50,9 +51,15 @@ public class ChatGPTManager : MonoBehaviour
         voiceToText.DictationEvents.OnFullTranscription.AddListener(OnFullTranscription);
         textToSpeechSpeaker.Events.OnAudioClipPlaybackStart.AddListener(OnTextToSpeechStarted);
         textToSpeechSpeaker.Events.OnAudioClipPlaybackFinished.AddListener(OnTextToSpeechFinished);
+        aiAssistant.OnResponseRecieved.AddListener(OnAIAssistantResponse);
         onResponseEvent.AddListener(OnResponse);
         userView = Camera.main.transform;
         voiceInputLabel.text = "";
+    }
+
+    private void OnAIAssistantResponse(string response)
+    {
+        onResponseEvent.Invoke(response);
     }
 
     private void OnPartialDescription(string transcript)
@@ -64,7 +71,8 @@ public class ChatGPTManager : MonoBehaviour
     void OnFullTranscription(string transcription)
     {
         voiceInputLabel.text = transcription;
-        AskChatGPT(transcription);
+        //AskChatGPT(transcription);
+        aiAssistant.AskAssistant(transcription);
         SetNPCState(NPCState.IsThinking);
     }
 
@@ -91,11 +99,6 @@ public class ChatGPTManager : MonoBehaviour
             messages.Add(chatResponse);
             onResponseEvent.Invoke(chatResponse.Content);
         }
-    }
-
-    public void AskAssistant()
-    {
-
     }
 
     // Update is called once per frame

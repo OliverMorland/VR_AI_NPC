@@ -41,16 +41,22 @@ public class AIAssistant : MonoBehaviour
     [ContextMenu("Send Test Message")]
     void SendMTestMessage()
     {
-        StartCoroutine(SendMessage());
+        StartCoroutine(AskAssistantAsync(testMessage));
     }
 
-    private IEnumerator SendMessage()
+    public void AskAssistant(string userMessage)
+    {
+        StartCoroutine(AskAssistantAsync(userMessage));
+    }
+
+
+    private IEnumerator AskAssistantAsync(string userMessage)
     {
         Debug.Log("Sending message");
         //Create message
         AddMessageToThread body = new AddMessageToThread();
         body.role = "user";
-        body.content = testMessage;
+        body.content = userMessage;
         string bodyJson = JsonUtility.ToJson(body);
         byte[] addMessageBodyRaw = Encoding.UTF8.GetBytes(bodyJson);
         UnityWebRequest addMessageRequest = ConfigureRequest("https://api.openai.com/v1/threads/" + threadId + "/messages", "POST", addMessageBodyRaw);
