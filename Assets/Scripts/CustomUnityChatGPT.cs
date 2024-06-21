@@ -91,23 +91,22 @@ public class CustomUnityChatGPT : MonoBehaviour
         }
     }
 
-}
+    [System.Serializable]
+    public class OpenAIResponse
+    {
+        public Choice[] choices;
+    }
 
-[System.Serializable]
-public class OpenAIResponse
-{
-    public Choice[] choices;
-}
+    [System.Serializable]
+    public class Choice
+    {
+        public Message message;
+    }
 
-[System.Serializable]
-public class Choice
-{
-    public Message message;
-}
-
-[System.Serializable]
-public class Message
-{
-    public string role;
-    public string content;
+    [System.Serializable]
+    public class Message
+    {
+        public string role;
+        public string content;
+    }
 }

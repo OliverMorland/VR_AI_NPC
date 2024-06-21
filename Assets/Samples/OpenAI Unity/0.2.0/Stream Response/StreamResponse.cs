@@ -45,6 +45,12 @@ namespace OpenAI
 
         private void HandleResponse(List<CreateChatCompletionResponse> responses)
         {
+            List<string> myList = new List<string>(); 
+            foreach (CreateChatCompletionResponse response in responses)
+            {
+                myList.Add(response.Choices[0].Delta.Content);
+            }
+            Debug.Log(string.Join("", myList));
             text.text = string.Join("", responses.Select(r => r.Choices[0].Delta.Content));
         }
 
