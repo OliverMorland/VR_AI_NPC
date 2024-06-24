@@ -64,7 +64,6 @@ public class ChatGPTManager : MonoBehaviour
 
     private void OnPartialDescription(string transcript)
     {
-        Debug.Log(transcript);
         voiceInputLabel.text = transcript;
     }
 
