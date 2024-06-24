@@ -7,6 +7,7 @@ using System;
 using Oculus.Voice.Dictation;
 using TMPro;
 using Meta.WitAi.TTS.Utilities;
+using OpenAIForUnity;
 
 public class ChatGPTManager : MonoBehaviour
 {
