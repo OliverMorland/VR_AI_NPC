@@ -783,7 +783,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   openAIConfig: {fileID: 11400000, guid: 8123d0f54bf3a404f99564b995956033, type: 2}
-  assistantId: asst_7Fz3eMgBKW0SaqBw8hsigYkS
+  assistantId: asst_iQOTrPcuusPL2UEvd5gNjTHl
   OnResponseRecieved:
     m_PersistentCalls:
       m_Calls: []

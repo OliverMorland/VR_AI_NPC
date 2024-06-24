@@ -3,12 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
-using static AIAssistant;
 
 public class AIAssistant : MonoBehaviour
 {
@@ -16,7 +13,6 @@ public class AIAssistant : MonoBehaviour
     public string assistantId = "asst_iQOTrPcuusPL2UEvd5gNjTHl";
     public UnityEvent<string> OnResponseRecieved;
     public string testMessage = "Hello, who are you?";
-    private string model = "gpt-3.5-turbo";
     private string threadId;
 
     // Start is called before the first frame update
