@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
+using static AIAssistant;
 
 public class AIAssistant : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class AIAssistant : MonoBehaviour
     public UnityEvent<string> OnResponseRecieved;
     public string testMessage = "Hello, who are you?";
     private string threadId;
+    const string apiEndPointRoot = "https://api.openai.com/v1/threads"; 
 
     // Start is called before the first frame update
     void Start()
@@ -107,6 +109,54 @@ public class AIAssistant : MonoBehaviour
             Debug.Log(content.text.value);
             OnResponseRecieved.Invoke(content.text.value);
         }
+    }
+
+    [ContextMenu("Cleaner Functions Test")]
+    void AddMessage_Cleaner()
+    {
+        DispatchAddMessageRequest("Hello, who are you?", 
+        failedResult =>
+        {
+            Debug.LogError(failedResult);
+        },
+        succeededResult =>
+        {
+            //CreateRun_Cleaner
+            Debug.Log(succeededResult);
+            RunMessages_Cleaner();
+        });
+    }
+
+    void RunMessages_Cleaner()
+    {
+        DispatchCreateRunRequest(
+        failedResult =>
+        {
+            Debug.LogError(failedResult);
+        },
+        succeededResult =>
+        {
+            //List Messages
+            Debug.Log(succeededResult);
+        });
+    }
+
+    void DispatchAddMessageRequest(string userMessage, Action<string> onRequestFailed, Action<string> onRequestSucceeded)
+    {
+        WebRequestData requestData = new WebRequestData();
+        requestData.path = $"{apiEndPointRoot}/{threadId}/messages";
+        requestData.methodType = WebRequestData.MethodType.POST;
+        requestData.body = CreateAddMessageRequestBody(userMessage);
+        DispatchWebRequest(requestData, onRequestFailed, onRequestSucceeded);
+    }
+
+    void DispatchCreateRunRequest(Action<string> onRequestFailed, Action<string> onRequestSucceeded)
+    {
+        WebRequestData requestData = new WebRequestData();
+        requestData.path = $"{apiEndPointRoot}/{threadId}/runs";
+        requestData.methodType = WebRequestData.MethodType.POST;
+        requestData.body = CreateRunRequestBody(assistantId);
+        DispatchWebRequest(requestData, onRequestFailed, onRequestSucceeded);   
     }
 
     public struct WebRequestData
@@ -215,10 +265,27 @@ public class AIAssistant : MonoBehaviour
         public string content;
     }
 
+    byte[] CreateAddMessageRequestBody(string userMessage)
+    {
+        AddMessageToThread body = new AddMessageToThread();
+        body.role = "user";
+        body.content = "Hello, who are you?";
+        string bodyJson = JsonUtility.ToJson(body);
+        return Encoding.UTF8.GetBytes(bodyJson);
+    }
+
     [System.Serializable]
     public struct CreateRunBody
     {
         public string assistant_id;
+    }
+
+    byte[] CreateRunRequestBody(string assistantId)
+    {
+        CreateRunBody body = new CreateRunBody();
+        body.assistant_id = assistantId;
+        string bodyJson = JsonUtility.ToJson(body);
+        return Encoding.UTF8.GetBytes(bodyJson);
     }
 
     [System.Serializable]
