@@ -20,7 +20,7 @@ public class AIAssistant : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(CreateNewThread());
+        CreateNewThread_Cleaner();
     }
 
     IEnumerator CreateNewThread()
@@ -37,6 +37,23 @@ public class AIAssistant : MonoBehaviour
         string responseText = createMessageRequest.downloadHandler.text;
         CreateThreadResponse createThreadResponse = JsonUtility.FromJson<CreateThreadResponse>(responseText);
         threadId = createThreadResponse.id;
+    }
+
+    void CreateNewThread_Cleaner()
+    {
+        WebRequestData requestData = new WebRequestData();
+        requestData.path = apiEndPointRoot;
+        requestData.methodType = WebRequestData.MethodType.POST;
+        DispatchWebRequest(requestData,
+        failedResult =>
+        {
+            Debug.LogError(failedResult);
+        },
+        successResult =>
+        {
+            CreateThreadResponse createThreadResponse = JsonUtility.FromJson<CreateThreadResponse>(successResult);
+            threadId = createThreadResponse.id;
+        });
     }
 
     [ContextMenu("Send Test Message")]
@@ -136,7 +153,6 @@ public class AIAssistant : MonoBehaviour
         },
         succeededResult =>
         {
-            //List Messages
             Debug.Log(succeededResult);
             CreateRunResponse runResponse = JsonUtility.FromJson<CreateRunResponse>(succeededResult);
             string runId = runResponse.id;
@@ -164,6 +180,7 @@ public class AIAssistant : MonoBehaviour
         }
         Debug.Log($"Message found after {requestAttempts} attempts");
         string response = GetResponseFromMessages(messages);
+        Debug.Log(response);
         OnResponseRecieved.Invoke(response);
     }
 
