@@ -138,7 +138,46 @@ public class AIAssistant : MonoBehaviour
         {
             //List Messages
             Debug.Log(succeededResult);
+            CreateRunResponse runResponse = JsonUtility.FromJson<CreateRunResponse>(succeededResult);
+            string runId = runResponse.id;
+            StartCoroutine(GetResponse_Cleaner(runId));
         });
+    }
+
+    IEnumerator GetResponse_Cleaner(string runId)
+    {
+        Message[] messages = new Message[0];
+        int requestAttempts = 0;
+        while (MessagesHaveContents(messages) == false)
+        {
+            yield return new WaitForSeconds(0.5f);
+            UnityWebRequest getMessagesRequest = CreateListMessagesRequest(runId);
+            yield return getMessagesRequest.SendWebRequest();
+            requestAttempts++;
+            if (RequestHasFailed(getMessagesRequest))
+            {
+                Debug.LogError(getMessagesRequest.error);
+                yield break;
+            }
+            GetMessagesResponse getMessagesResponse = JsonUtility.FromJson<GetMessagesResponse>(getMessagesRequest.downloadHandler.text);
+            messages = getMessagesResponse.data;
+        }
+        Debug.Log($"Message found after {requestAttempts} attempts");
+        string response = GetResponseFromMessages(messages);
+        OnResponseRecieved.Invoke(response);
+    }
+
+    string GetResponseFromMessages(Message[] messages)
+    {
+        string response = "";
+        Message firstMessage = messages[0];
+        MessageContent[] messageContents = firstMessage.content;
+        Debug.Log("Message Contents length: " + messageContents.Length);
+        foreach (var content in messageContents)
+        {
+            response = content.text.value;
+        }
+        return response;
     }
 
     void DispatchAddMessageRequest(string userMessage, Action<string> onRequestFailed, Action<string> onRequestSucceeded)
@@ -159,6 +198,14 @@ public class AIAssistant : MonoBehaviour
         DispatchWebRequest(requestData, onRequestFailed, onRequestSucceeded);   
     }
 
+    UnityWebRequest CreateListMessagesRequest(string runId)
+    {
+        WebRequestData requestData = new WebRequestData();
+        requestData.path = $"{apiEndPointRoot}/{threadId}/messages?run_id={runId}";
+        requestData.methodType = WebRequestData.MethodType.GET;
+        return CreateWebRequest(requestData);
+    }
+
     public struct WebRequestData
     {
         public string path;
@@ -169,6 +216,19 @@ public class AIAssistant : MonoBehaviour
 
     void DispatchWebRequest(WebRequestData webRequestData, Action<string> onRequestFailed, Action<string> onRequestSucceeded)
     {
+        //string methodAsString = GetMethodAsString(webRequestData.methodType);
+        //UnityWebRequest webRequest = new UnityWebRequest(webRequestData.path, methodAsString);
+        //webRequest.uploadHandler = new UploadHandlerRaw(webRequestData.body);
+        //webRequest.downloadHandler = new DownloadHandlerBuffer();
+        //webRequest.SetRequestHeader("Content-Type", "application/json");
+        //webRequest.SetRequestHeader("OpenAI-Beta", "assistants=v2");
+        //webRequest.SetRequestHeader("Authorization", "Bearer " + openAIConfig.secretAPIKey);
+        UnityWebRequest webRequest = CreateWebRequest(webRequestData);
+        StartCoroutine(DispatchWebRequestAsync(webRequest, onRequestFailed, onRequestSucceeded));
+    }
+
+    UnityWebRequest CreateWebRequest(WebRequestData webRequestData)
+    {
         string methodAsString = GetMethodAsString(webRequestData.methodType);
         UnityWebRequest webRequest = new UnityWebRequest(webRequestData.path, methodAsString);
         webRequest.uploadHandler = new UploadHandlerRaw(webRequestData.body);
@@ -176,7 +236,7 @@ public class AIAssistant : MonoBehaviour
         webRequest.SetRequestHeader("Content-Type", "application/json");
         webRequest.SetRequestHeader("OpenAI-Beta", "assistants=v2");
         webRequest.SetRequestHeader("Authorization", "Bearer " + openAIConfig.secretAPIKey);
-        StartCoroutine(DispatchWebRequestAsync(webRequest, onRequestFailed, onRequestSucceeded));
+        return webRequest;
     }
 
     IEnumerator DispatchWebRequestAsync(UnityWebRequest webRequest, Action<string> onRequestFailed, Action<string> onRequestSucceeded)
