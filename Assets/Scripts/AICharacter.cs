@@ -4,9 +4,11 @@ using Oculus.Voice.Dictation;
 using TMPro;
 using Meta.WitAi.TTS.Utilities;
 using OpenAIForUnity;
+using System;
 
 public class AICharacter : MonoBehaviour
 {
+    public bool debugStates = false;
     public string displayName = "Oliver";
     public OpenAIAssistant aiAssistant; 
     public UnityEvent<string> onResponseEvent = new UnityEvent<string>();
@@ -36,7 +38,7 @@ public class AICharacter : MonoBehaviour
         voiceToText.DictationEvents.OnPartialTranscription.AddListener(OnPartialDescription);
         voiceToText.DictationEvents.OnFullTranscription.AddListener(OnFullTranscription);
         textToSpeechSpeaker.Events.OnAudioClipPlaybackStart.AddListener(OnTextToSpeechStarted);
-        textToSpeechSpeaker.Events.OnAudioClipPlaybackFinished.AddListener(OnTextToSpeechFinished);
+        textToSpeechSpeaker.Events.OnPlaybackQueueComplete.AddListener(OnTextToSpeechFinished);
         aiAssistant.OnResponseRecieved.AddListener(OnAIAssistantResponse);
         onResponseEvent.AddListener(OnResponse);
         SetNPCState(NPCState.None);
@@ -90,6 +92,10 @@ public class AICharacter : MonoBehaviour
 
     void SetNPCState(NPCState desiredNPCState)
     {
+        if (debugStates)
+        {
+            Debug.Log("Switching to " + desiredNPCState.ToString());
+        }
         currentNPCState = desiredNPCState;
 
         switch (currentNPCState)
@@ -128,7 +134,7 @@ public class AICharacter : MonoBehaviour
         SetNPCState(NPCState.IsTalking);
     }
 
-    private void OnTextToSpeechFinished(AudioClip clip)
+    private void OnTextToSpeechFinished()
     {
         SetNPCState(NPCState.None);
     }
