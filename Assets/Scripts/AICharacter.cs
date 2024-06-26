@@ -7,6 +7,7 @@ using OpenAIForUnity;
 
 public class AICharacter : MonoBehaviour
 {
+    public string displayName = "Oliver";
     public OpenAIAssistant aiAssistant; 
     public UnityEvent<string> onResponseEvent = new UnityEvent<string>();
     public AppDictationExperience voiceToText;
@@ -19,7 +20,7 @@ public class AICharacter : MonoBehaviour
     public float minConversationRange = 5f;
     Transform userView;
     public Transform avatarTransform;
-    public TMP_Text npcFeedbackText;
+    public TMP_Text npcStatusLabel;
     public enum NPCState { None, IsListening, IsThinking, IsTalking};
     public NPCState currentNPCState = NPCState.None;
     public Animator animator;
@@ -38,6 +39,7 @@ public class AICharacter : MonoBehaviour
         textToSpeechSpeaker.Events.OnAudioClipPlaybackFinished.AddListener(OnTextToSpeechFinished);
         aiAssistant.OnResponseRecieved.AddListener(OnAIAssistantResponse);
         onResponseEvent.AddListener(OnResponse);
+        SetNPCState(NPCState.None);
         userView = Camera.main.transform;
         voiceInputLabel.text = "";
     }
@@ -94,23 +96,23 @@ public class AICharacter : MonoBehaviour
         {
             case NPCState.None:
                 //Do nothing
-                npcFeedbackText.text = "";
+                npcStatusLabel.text = displayName;
                 animator.SetTrigger(IDLE_TRIGGER);
                 voiceToText.Deactivate();
                 break;
             case NPCState.IsListening:
-                npcFeedbackText.text = "Listening...";
+                npcStatusLabel.text = "Listening...";
                 animator.SetTrigger(LISTEN_TRIGGER);
                 voiceToText.Activate();
                 break;
             case NPCState.IsThinking:
-                npcFeedbackText.text = "Thinking...";
+                npcStatusLabel.text = "Thinking...";
                 animator.SetTrigger(THINK_TRIGGER);
                 voiceToText.Deactivate();
                 break;
             case NPCState.IsTalking:
                 animator.SetTrigger(TALK_TRIGGER);
-                npcFeedbackText.text = currentOpenAIResponse;
+                npcStatusLabel.text = displayName;
                 voiceInputLabel.text = "";
                 break;
         }

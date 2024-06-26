@@ -170,6 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f575b36f178988b478f50eeb544a8e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  displayName: Nurse Stephens
   aiAssistant: {fileID: 5949131}
   onResponseEvent:
     m_PersistentCalls:
@@ -192,7 +193,7 @@ MonoBehaviour:
   textToSpeechSpeaker: {fileID: 2022428739}
   minConversationRange: 2
   avatarTransform: {fileID: 2136771993369570606}
-  npcFeedbackText: {fileID: 383447567}
+  npcStatusLabel: {fileID: 1400678481}
   currentNPCState: 0
   animator: {fileID: 7771591026382284832}
 --- !u!4 &5949133
@@ -213,6 +214,17 @@ Transform:
   - {fileID: 2022428740}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -1.618, y: 307.125, z: -1.232}
+--- !u!114 &356808906 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6846722877059115436, guid: 911ae71578077474a9ae11b38002c93f, type: 3}
+  m_PrefabInstance: {fileID: 981821949}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &383447566
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -313,22 +325,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 8220360519198370021, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
---- !u!114 &383447567 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4372891188345097982, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
-  m_PrefabInstance: {fileID: 383447566}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &383447568 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 555706700879341309, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
@@ -489,6 +494,14 @@ PrefabInstance:
       propertyPath: voiceToText
       value: 
       objectReference: {fileID: 1780598254}
+    - target: {fileID: 4321255122033812359, guid: 911ae71578077474a9ae11b38002c93f, type: 3}
+      propertyPath: npcStatusLabel
+      value: 
+      objectReference: {fileID: 356808906}
+    - target: {fileID: 7158024635763109227, guid: 911ae71578077474a9ae11b38002c93f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8639153531630274565, guid: 911ae71578077474a9ae11b38002c93f, type: 3}
       propertyPath: assistantId
       value: asst_ajn0lIIHtOR483pLK1cT0lYc
@@ -498,6 +511,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 911ae71578077474a9ae11b38002c93f, type: 3}
+--- !u!114 &1178749309 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5640350630019558434, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
+  m_PrefabInstance: {fileID: 8260732496825438321}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1224386548 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4852061571279439023, guid: 3e919abfe68b0314aa3fa156a83435f2, type: 3}
@@ -653,6 +677,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1400678481 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5640350630019558434, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
+  m_PrefabInstance: {fileID: 383447566}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1516603451
 GameObject:
   m_ObjectHideFlags: 0
@@ -1455,6 +1490,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f575b36f178988b478f50eeb544a8e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  displayName: Nurse Jones
   aiAssistant: {fileID: 1441867666342895098}
   onResponseEvent:
     m_PersistentCalls:
@@ -1477,7 +1513,7 @@ MonoBehaviour:
   textToSpeechSpeaker: {fileID: 8044461415879710157}
   minConversationRange: 2
   avatarTransform: {fileID: 7696632941709083179}
-  npcFeedbackText: {fileID: 8260732496825438322}
+  npcStatusLabel: {fileID: 1178749309}
   currentNPCState: 0
   animator: {fileID: 7109667761011412483}
 --- !u!137 &6716810388214866587 stripped
@@ -1703,7 +1739,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 555706700879341309, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 400
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 555706700879341309, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
       propertyPath: m_LocalScale.x
@@ -1765,22 +1801,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 8220360519198370021, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
---- !u!114 &8260732496825438322 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4372891188345097982, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
-  m_PrefabInstance: {fileID: 8260732496825438321}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &8260732496825438323 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 555706700879341309, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
