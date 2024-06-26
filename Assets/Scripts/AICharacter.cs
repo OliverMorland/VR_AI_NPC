@@ -23,6 +23,8 @@ public class AICharacter : MonoBehaviour
     Transform userView;
     public Transform avatarTransform;
     public TMP_Text npcStatusLabel;
+    [Range(0, 1f)] public float rotationFactor = 0.5f;
+    bool isTurningToFaceUser = false;
     public enum NPCState { None, IsListening, IsThinking, IsTalking};
     public NPCState currentNPCState = NPCState.None;
     public Animator animator;
@@ -73,6 +75,15 @@ public class AICharacter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        WaitForUserToApproachToStartListening();
+        if (isTurningToFaceUser)
+        {
+            TurnToFaceUser();
+        }
+    }
+
+    private void WaitForUserToApproachToStartListening()
+    {
         Vector3 userToHeadVector = avatarTransform.position - userView.transform.position;
         float distanceSquared = userToHeadVector.sqrMagnitude;
         if (distanceSquared < minConversationRange)
@@ -91,6 +102,22 @@ public class AICharacter : MonoBehaviour
         }
     }
 
+    private void TurnToFaceUser()
+    {
+        Vector3 directionToUser = GetDirectionToUser();
+        Debug.DrawLine(avatarTransform.position, directionToUser * 3f, Color.yellow);
+        Quaternion lookAtRotation = Quaternion.LookRotation(directionToUser);
+        transform.rotation = Quaternion.Lerp(transform.rotation, lookAtRotation, rotationFactor);
+    }
+
+    Vector3 GetDirectionToUser()
+    {
+        Vector3 directionToUser = (userView.transform.position - transform.position);
+        directionToUser.y = 0;
+        directionToUser.Normalize();
+        return directionToUser;
+    }
+
     void SetNPCState(NPCState desiredNPCState)
     {
         if (debugStates)
@@ -105,21 +132,25 @@ public class AICharacter : MonoBehaviour
                 //Do nothing
                 npcStatusLabel.text = displayName;
                 animator.SetTrigger(IDLE_TRIGGER);
+                isTurningToFaceUser = false;
                 voiceToText.Deactivate();
                 break;
             case NPCState.IsListening:
                 npcStatusLabel.text = "Listening...";
                 animator.SetTrigger(LISTEN_TRIGGER);
+                isTurningToFaceUser = true;
                 voiceToText.Activate();
                 break;
             case NPCState.IsThinking:
                 npcStatusLabel.text = "Thinking...";
                 animator.SetTrigger(THINK_TRIGGER);
+                isTurningToFaceUser = false;
                 voiceToText.Deactivate();
                 break;
             case NPCState.IsTalking:
                 animator.SetTrigger(TALK_TRIGGER);
                 npcStatusLabel.text = displayName;
+                isTurningToFaceUser = true;
                 voiceInputLabel.text = "";
                 break;
         }
