@@ -42,6 +42,7 @@ public class AICharacter : MonoBehaviour
         aiAssistant.OnResponseRecieved.AddListener(OnAIAssistantResponse);
         onResponseEvent.AddListener(OnResponse);
         SetNPCState(NPCState.None);
+        animator.ResetTrigger(IDLE_TRIGGER);
         userView = Camera.main.transform;
         voiceInputLabel.text = "";
     }

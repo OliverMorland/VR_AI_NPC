@@ -244,6 +244,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f575b36f178988b478f50eeb544a8e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugStates: 1
+  displayName: Oliver
   aiAssistant: {fileID: 8639153531630274565}
   onResponseEvent:
     m_PersistentCalls:
@@ -264,9 +266,9 @@ MonoBehaviour:
   voiceInputLabel: {fileID: 8880673000516998661}
   openAIConfiguration: {fileID: 11400000, guid: 8123d0f54bf3a404f99564b995956033, type: 2}
   textToSpeechSpeaker: {fileID: 4396154787986846508}
-  minConversationRange: 5
+  minConversationRange: 2
   avatarTransform: {fileID: 2528741456747907172}
-  npcFeedbackText: {fileID: 3309405153478544240}
+  npcStatusLabel: {fileID: 6846722877059115436}
   currentNPCState: 0
   animator: {fileID: 3793041100626058700}
 --- !u!114 &8639153531630274565
@@ -282,7 +284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   openAIConfig: {fileID: 11400000, guid: 8123d0f54bf3a404f99564b995956033, type: 2}
-  assistantId: asst_iQOTrPcuusPL2UEvd5gNjTHl
+  assistantId: asst_ajn0lIIHtOR483pLK1cT0lYc
   OnResponseRecieved:
     m_PersistentCalls:
       m_Calls: []
@@ -2768,9 +2770,9 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 555706700879341309, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
   m_PrefabInstance: {fileID: 1243837020079474062}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3309405153478544240 stripped
+--- !u!114 &6846722877059115436 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4372891188345097982, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
+  m_CorrespondingSourceObject: {fileID: 5640350630019558434, guid: 316eeb69c1d2680469ef60c9844d54e1, type: 3}
   m_PrefabInstance: {fileID: 1243837020079474062}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
