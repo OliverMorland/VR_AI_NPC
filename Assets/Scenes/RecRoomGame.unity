@@ -277,6 +277,30 @@ PrefabInstance:
       propertyPath: RequestSettings.configuration
       value: 
       objectReference: {fileID: 11400000, guid: 64b9566a706af854d90772302977ff42, type: 2}
+    - target: {fileID: 4852061571279439023, guid: 3e919abfe68b0314aa3fa156a83435f2, type: 3}
+      propertyPath: _presetVoiceSettings.Array.size
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 4852061571279439023, guid: 3e919abfe68b0314aa3fa156a83435f2, type: 3}
+      propertyPath: _presetVoiceSettings.Array.data[16].pitch
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4852061571279439023, guid: 3e919abfe68b0314aa3fa156a83435f2, type: 3}
+      propertyPath: _presetVoiceSettings.Array.data[16].speed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4852061571279439023, guid: 3e919abfe68b0314aa3fa156a83435f2, type: 3}
+      propertyPath: _presetVoiceSettings.Array.data[16].style
+      value: default
+      objectReference: {fileID: 0}
+    - target: {fileID: 4852061571279439023, guid: 3e919abfe68b0314aa3fa156a83435f2, type: 3}
+      propertyPath: _presetVoiceSettings.Array.data[16].voice
+      value: wit$British Butler
+      objectReference: {fileID: 0}
+    - target: {fileID: 4852061571279439023, guid: 3e919abfe68b0314aa3fa156a83435f2, type: 3}
+      propertyPath: _presetVoiceSettings.Array.data[16].SettingsId
+      value: WIT$BRITISH BUTLER
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -461,6 +485,10 @@ PrefabInstance:
       propertyPath: _ttsService
       value: 
       objectReference: {fileID: 1224386548}
+    - target: {fileID: 4396154787986846508, guid: 911ae71578077474a9ae11b38002c93f, type: 3}
+      propertyPath: presetVoiceID
+      value: WIT$BRITISH BUTLER
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
