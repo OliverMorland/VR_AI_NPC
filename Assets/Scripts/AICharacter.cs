@@ -5,11 +5,12 @@ using TMPro;
 using Meta.WitAi.TTS.Utilities;
 using OpenAIForUnity;
 using System;
+using System.Collections;
 
 public class AICharacter : MonoBehaviour
 {
-    public bool debugStates = false;
     public string displayName = "Oliver";
+    [TextArea(3, 15)]public string initialMessage = "";
     public OpenAIAssistant aiAssistant; 
     public UnityEvent<string> onResponseEvent = new UnityEvent<string>();
     public AppDictationExperience voiceToText;
@@ -32,6 +33,7 @@ public class AICharacter : MonoBehaviour
     const string THINK_TRIGGER = "Think";
     const string TALK_TRIGGER = "Talk";
     const string IDLE_TRIGGER = "Idle";
+    bool isFirstInteraction = true;
 
 
     // Start is called before the first frame update
@@ -72,6 +74,12 @@ public class AICharacter : MonoBehaviour
         }
     }
 
+    [ContextMenu("Ask Test Message")]
+    void AskTestMessage()
+    {
+        OnFullTranscription("Anything else?");
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -92,6 +100,11 @@ public class AICharacter : MonoBehaviour
             {
                 SetNPCState(NPCState.IsListening);
             }
+            if (isFirstInteraction && !string.IsNullOrEmpty(initialMessage))
+            {
+                StartCoroutine(SendInitialMessageAfterDelay());
+                isFirstInteraction = false;
+            }
         }
         else
         {
@@ -100,6 +113,14 @@ public class AICharacter : MonoBehaviour
                 SetNPCState(NPCState.None);
             }
         }
+    }
+
+    IEnumerator SendInitialMessageAfterDelay()
+    {
+        yield return new WaitForEndOfFrame();
+        SetNPCState(NPCState.IsThinking);
+        textToSpeechSpeaker.Speak(initialMessage);
+
     }
 
     private void TurnToFaceUser()
@@ -120,12 +141,7 @@ public class AICharacter : MonoBehaviour
 
     void SetNPCState(NPCState desiredNPCState)
     {
-        if (debugStates)
-        {
-            Debug.Log("Switching to " + desiredNPCState.ToString());
-        }
         currentNPCState = desiredNPCState;
-
         switch (currentNPCState)
         {
             case NPCState.None:

@@ -15,6 +15,7 @@ namespace OpenAIForUnity
         private string threadId;
         const string apiEndPointRoot = "https://api.openai.com/v1/threads";
         const float LIST_MESSAGES_INTERVAL = 0.5f;
+        [TextArea(3,15)] public string initialMessage = "";
 
         // Start is called before the first frame update
         void Start()
@@ -27,6 +28,7 @@ namespace OpenAIForUnity
             WebRequestData requestData = new WebRequestData();
             requestData.path = apiEndPointRoot;
             requestData.methodType = WebRequestData.MethodType.POST;
+            //requestData.body = CreateNewThreadRequestBody();
             DispatchWebRequest(requestData,
             failedResult =>
             {
@@ -36,7 +38,30 @@ namespace OpenAIForUnity
             {
                 CreateThreadResult createThreadResponse = JsonUtility.FromJson<CreateThreadResult>(successResult);
                 threadId = createThreadResponse.id;
+                //if (!string.IsNullOrEmpty(initialMessage))
+                //{
+                //    AskAssistant(initialMessage);
+                //}
             });
+        }
+
+        byte[] CreateNewThreadRequestBody()
+        {
+            CreateThreadBody body = new CreateThreadBody();
+            body.messages = CreateFirstMessages();
+            string bodyJson = JsonUtility.ToJson(body);
+            return Encoding.UTF8.GetBytes(bodyJson);
+        }
+
+        private Message[] CreateFirstMessages()
+        {
+            Message firstMessage = new Message();
+            MessageContent content = new MessageContent();
+            content.text.value = initialMessage;
+            content.type = "text";
+            firstMessage.content = new MessageContent[] { content };
+            firstMessage.role = "assistant";
+            return new Message[] { firstMessage };
         }
 
         void DispatchWebRequest(WebRequestData webRequestData, Action<string> onRequestFailed, Action<string> onRequestSucceeded)
@@ -107,6 +132,11 @@ namespace OpenAIForUnity
             });
         }
 
+        public void AddAssistantMessage()
+        {
+
+        }
+
         void RunMessages()
         {
             DispatchRunRequest(
@@ -121,6 +151,29 @@ namespace OpenAIForUnity
                 string runId = runResult.id;
                 StartCoroutine(WaitForAssistantResponse(runId));
             });
+        }
+
+        [ContextMenu("List Messages")]
+        void ListMessages()
+        {
+            StartCoroutine(ListMessagesAsync());
+        }
+
+        IEnumerator ListMessagesAsync()
+        {
+            WebRequestData requestData = new WebRequestData();
+            requestData.path = $"{apiEndPointRoot}/{threadId}/messages";
+            requestData.methodType = WebRequestData.MethodType.GET;
+            UnityWebRequest webRequest = CreateWebRequest(requestData);
+            yield return webRequest.SendWebRequest();
+            if (RequestHasFailed(webRequest))
+            {
+                Debug.LogError(webRequest.error);
+            }
+            else
+            {
+                Debug.Log(webRequest.downloadHandler.text);
+            }
         }
 
         IEnumerator WaitForAssistantResponse(string runId)
@@ -273,6 +326,12 @@ namespace OpenAIForUnity
         public struct ListMessagesResult
         {
             public Message[] data;
+        }
+
+        [System.Serializable]
+        public struct CreateThreadBody
+        {
+            public Message[] messages;
         }
 
         [System.Serializable]
