@@ -28,7 +28,10 @@ namespace OpenAIForUnity
             WebRequestData requestData = new WebRequestData();
             requestData.path = apiEndPointRoot;
             requestData.methodType = WebRequestData.MethodType.POST;
-            //requestData.body = CreateNewThreadRequestBody();
+            if (!string.IsNullOrEmpty(initialMessage))
+            {
+                requestData.body = CreateNewThreadRequestBody();
+            }
             DispatchWebRequest(requestData,
             failedResult =>
             {
@@ -38,10 +41,6 @@ namespace OpenAIForUnity
             {
                 CreateThreadResult createThreadResponse = JsonUtility.FromJson<CreateThreadResult>(successResult);
                 threadId = createThreadResponse.id;
-                //if (!string.IsNullOrEmpty(initialMessage))
-                //{
-                //    AskAssistant(initialMessage);
-                //}
             });
         }
 
@@ -53,15 +52,15 @@ namespace OpenAIForUnity
             return Encoding.UTF8.GetBytes(bodyJson);
         }
 
-        private Message[] CreateFirstMessages()
+        private InitialMessage[] CreateFirstMessages()
         {
-            Message firstMessage = new Message();
-            MessageContent content = new MessageContent();
-            content.text.value = initialMessage;
+            InitialMessage firstMessage = new InitialMessage();
+            InitialMessageContent content = new InitialMessageContent();
+            content.text = initialMessage;
             content.type = "text";
-            firstMessage.content = new MessageContent[] { content };
+            firstMessage.content = new InitialMessageContent[] { content };
             firstMessage.role = "assistant";
-            return new Message[] { firstMessage };
+            return new InitialMessage[] { firstMessage };
         }
 
         void DispatchWebRequest(WebRequestData webRequestData, Action<string> onRequestFailed, Action<string> onRequestSucceeded)
@@ -127,14 +126,8 @@ namespace OpenAIForUnity
             },
             succeededResult =>
             {
-                Debug.Log(succeededResult);
                 RunMessages();
             });
-        }
-
-        public void AddAssistantMessage()
-        {
-
         }
 
         void RunMessages()
@@ -146,7 +139,6 @@ namespace OpenAIForUnity
             },
             succeededResult =>
             {
-                Debug.Log(succeededResult);
                 RunResult runResult = JsonUtility.FromJson<RunResult>(succeededResult);
                 string runId = runResult.id;
                 StartCoroutine(WaitForAssistantResponse(runId));
@@ -331,7 +323,7 @@ namespace OpenAIForUnity
         [System.Serializable]
         public struct CreateThreadBody
         {
-            public Message[] messages;
+            public InitialMessage[] messages;
         }
 
         [System.Serializable]
@@ -347,6 +339,20 @@ namespace OpenAIForUnity
         {
             public string type;
             public MessageText text;
+        }
+
+        [System.Serializable]
+        public struct InitialMessage
+        {
+            public string role;
+            public InitialMessageContent[] content;
+        }
+
+        [System.Serializable]
+        public struct InitialMessageContent
+        {
+            public string type;
+            public string text;
         }
 
         [System.Serializable]
